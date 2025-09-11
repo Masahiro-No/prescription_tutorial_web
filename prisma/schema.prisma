@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Medicine {
+  id            String             @id @default(uuid()) @db.Uuid
+  medicineCode  String             @unique
+  nameEN        String
+  nameTH        String
+  catagory      String
+  amount        Decimal            @db.Decimal(10, 2) @default(0) 
+  current_price Decimal            @map("current_price") @db.Decimal(10, 2) @default(0) 
+  advice        String? // optional
+  // picture       String[]?                            // optional, maps to Postgres text[]
+  items         PrescriptionItem[] // relation back to PrescriptionItem
+
+  @@map("Medicine")
+}
+
+model PrescriptionItem {
+  id             String  @id @default(uuid()) @db.Uuid
+  medicineId     String  @map("medicineListed") @db.Uuid
+  prescriptionId String  @map("prescription") @db.Uuid
+  instruction    String? // optional
+  amount         Decimal @db.Decimal(10, 2) @default(0) 
+  price          Decimal @db.Decimal(10, 2) @default(0) 
+
+  // relations
+  medicine     Medicine     @relation(fields: [medicineId], references: [id])
+  prescription Prescription @relation(fields: [prescriptionId], references: [id])
+
+  @@index([prescriptionId])
+  @@index([medicineId])
+  @@map("PrescriptionItem")
+}
+
+model Prescription {
+  id           String   @id @default(uuid()) @db.Uuid
+  name_patient String
+  name_docter  String
+  date         DateTime @db.Date
+
+  items PrescriptionItem[] // relation: one Prescription has many PrescriptionItem
+
+  @@map("Prescription")
+}
