@@ -14,10 +14,9 @@ export default function NavbarTabs() {
     { id: "prescription", label: "Prescription", link: "/prescription" },
   ];
 
-  // ฟังก์ชันเช็คว่า tab ไหน active จาก path ปัจจุบัน
   const isActive = (tab: Tab) => {
     if (tab.link === "/") return pathname === "/";
-    // รองรับกรณี route ย่อย เช่น /storage/xxx
+
     return pathname.startsWith(tab.link);
   };
 
