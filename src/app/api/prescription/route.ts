@@ -2,14 +2,34 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 
-export async function GET() {
-    const data = await prisma.prescription.findMany({
-        include: {
-            items: { include: { medicine: true } },
+export async function GET(req: Request) {
+    const { searchParams } = new URL(req.url)
+    const page = Math.max(parseInt(searchParams.get('page') || '1', 10), 1)
+    const pageSize = Math.min(Math.max(parseInt(searchParams.get('pageSize') || '10', 10), 1), 100)
+
+    const [total, data] = await Promise.all([
+        prisma.prescription.count(),
+        prisma.prescription.findMany({
+            include: {
+                items: { include: { medicine: true } },
+            },
+            orderBy: [{ date: 'desc' }, { id: 'desc' }], // ใส่ id เพื่อให้ลำดับคงที่
+            skip: (page - 1) * pageSize,
+            take: pageSize,
+        }),
+    ])
+
+    return NextResponse.json({
+        data,
+        meta: {
+            page,
+            pageSize,
+            total,
+            totalPages: Math.ceil(total / pageSize),
+            hasPrev: page > 1,
+            hasNext: page * pageSize < total,
         },
-        orderBy: { date: 'desc' },
     })
-    return NextResponse.json(data)
 }
 
 // POST: ใช้ medicineCode แทน medicineId และดึง price จาก Medicine
