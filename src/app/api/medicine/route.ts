@@ -3,16 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 
 export async function GET() {
-    const medicines = await prisma.medicine.findMany({
-        include: {
-            items: {
-                include: {
-                    prescription: true,
-                },
-            },
-        },
-    });
-    return NextResponse.json(medicines);
+const medicines = await prisma.medicine.findMany({ orderBy: { id: "asc" } });
+  return NextResponse.json(medicines);
 }
 
 export async function POST(req: Request) {
