@@ -30,7 +30,7 @@ export default function SimpleTable<T extends object>({
     });
 
     return (
-        <table className={`border-collapse border border-gray-300 m-auto ${className}`}>
+        <table className={`text-black border-collapse border border-gray-300 m-auto ${className}`}>
             <thead>
                 {table.getHeaderGroups().map((hg) => (
                     <tr key={hg.id}>
