@@ -2,37 +2,60 @@
 import NavbarTabs from "@/component/tast_bar";
 import SimpleTable from "@/component/simple_table";
 import type { ColumnDef } from "@tanstack/react-table";
+import { useEffect, useState } from "react";
 
 type Medicine = {
   id: string;
-  code: string;
-  name: string;
-  category: string;
+  medicineCode: string;
+  nameEN: string;
+  nameTH: string;
+  catagory: string;
   amount: number;
-  price: number;
+  current_price: number;
 };
 
 const medicineColumns: ColumnDef<Medicine>[] = [
-  { accessorKey: "id", header: "ID" },
-  { accessorKey: "code", header: "รหัสยา" },
-  { accessorKey: "name", header: "ชื่อยา" },
-  { accessorKey: "category", header: "หมวดหมู่" },
+  { accessorKey: "medicineCode", header: "รหัสยา" },
+  { accessorKey: "nameEN", header: "ชื่อยา (อังกฤษ)" },
+  { accessorKey: "nameTH", header: "ชื่อยา (ไทย)" },
+  { accessorKey: "catagory", header: "หมวดหมู่" },
   { accessorKey: "amount", header: "จำนวน", },
-  { accessorKey: "price", header: "ราคา", },
-];
-
-const fakeMedicines: Medicine[] = [
-  { id: "xxx", code: "007", name: "Paracetamol", category: "ทั่วไป", amount: 50, price: 12.5 },
+  { accessorKey: "current_price", header: "ราคา", },
+  {
+    id: "actions",
+    header: "Actions",
+    // cell receives row; use row.original to access the full object
+    cell: ({ row }) => {
+      const item = row.original as Medicine;
+      return (
+        <div className="flex gap-2">
+        </div>
+      );
+    },
+  },
 ];
 
 export default function List_of_medicine() {
+  const [data, setData] = useState<Medicine[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/medicine")
+      .then((res) => res.json())
+      .then((meds: Medicine[]) => {
+        setData(meds);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
   return (
     <div className="bg-white min-h-screen">
       <NavbarTabs page="list" />
       <main className="p-4">
         <h1 className="text-xl font-bold">List of Medicines</h1>
         <SimpleTable<Medicine>
-          data={fakeMedicines}
+          data={data}
           columns={medicineColumns}
           className="w-[80%]"
           onRowClick={(r) => console.log("clicked medicine", r)}
