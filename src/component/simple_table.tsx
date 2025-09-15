@@ -30,7 +30,7 @@ export default function SimpleTable<T extends object>({
     });
 
     return (
-        <table className={`border-collapse border border-gray-300 m-auto ${className}`}>
+        <table className={`text-black border-collapse border border-gray-300 m-auto ${className}`}>
             <thead>
                 {table.getHeaderGroups().map((hg) => (
                     <tr key={hg.id}>
@@ -54,7 +54,7 @@ export default function SimpleTable<T extends object>({
                             className={onRowClick ? "cursor-pointer" : undefined}
                         >
                             {row.getVisibleCells().map((cell) => (
-                                <td key={cell.id} className="border border-gray-100 p-2 hover:text-blue-600 hover:bg-gray-50">
+                                <td key={cell.id} className="bg-white border border-gray-100 p-2 hover:text-blue-600 hover:bg-gray-50">
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </td>
                             ))}
