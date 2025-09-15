@@ -12,6 +12,7 @@ type Medicine = {
   catagory: string;
   amount: number;
   current_price: number;
+  advice: string | null;
 };
 
 const medicineColumns: ColumnDef<Medicine>[] = [
@@ -21,6 +22,7 @@ const medicineColumns: ColumnDef<Medicine>[] = [
   { accessorKey: "catagory", header: "หมวดหมู่" },
   { accessorKey: "amount", header: "จำนวน", },
   { accessorKey: "current_price", header: "ราคา", },
+  { accessorKey: "advice", header: "คำแนะนำ" },
 ];
 
 export default function List_of_medicine() {
