@@ -4,6 +4,8 @@ import AddButton from "@/component/add_button";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import EditData from "@/component/edit_data";
+import { Input } from "@/components/ui/input"
+
 type Medicine = {
   id: string;
   medicineCode: string;
