@@ -1,6 +1,7 @@
 "use client";
 import NavbarTabs from "@/component/Nav_Bar";
 import SimpleTable from "@/component/simple_table";
+import AddButton from "@/component/add_button"; // เพิ่มบรรทัดนี้
 import type { ColumnDef } from "@tanstack/react-table";
 
 type Medicine = {
@@ -30,6 +31,9 @@ export default function List_of_medicine() {
     <div>
       <div className="p-4">
         <h1 className="text-xl font-bold text-black">List of Medicines</h1>
+        <div className="mb-4">
+          <AddButton />
+        </div>
         <SimpleTable<Medicine>
           data={fakeMedicines}
           columns={medicineColumns}
