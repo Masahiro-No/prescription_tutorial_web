@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 type Medicine = {
+  medicineCode?: string;
   nameEN: string;
   nameTH: string;
   catagory?: string;       // คงชื่อตามที่คุณใช้เดิม
@@ -20,6 +21,7 @@ const AddButton: React.FC<AddButtonProps> = ({ defaultData, onSuccess }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const [form, setForm] = useState<Medicine>({
+    medicineCode: "",
     nameEN: "",
     nameTH: "",
     catagory: "",
@@ -76,7 +78,8 @@ const AddButton: React.FC<AddButtonProps> = ({ defaultData, onSuccess }) => {
         amount: form.amount,
         current_price: form.current_price,
         advice: form.advice,
-        medicineCode: "MC" + Date.now(), // <--- ตรงนี้!
+        // use the medicineCode the user entered (required)
+        medicineCode: form.medicineCode,
       };
 
       const res = await fetch("/api/medicine", {
@@ -119,6 +122,17 @@ const AddButton: React.FC<AddButtonProps> = ({ defaultData, onSuccess }) => {
             <form onSubmit={handleSubmit} className="p-6 grid gap-3">
               {/* ฟิลด์ต่างๆ */}
               <div className="grid gap-1.5">
+                <label htmlFor="medicineCode" className="text-sm font-medium text-gray-800">รหัสยา</label>
+                <input
+                  id="medicineCode"
+                  name="medicineCode"
+                  placeholder="เช่น MC1234"
+                  value={form.medicineCode ?? ""}
+                  onChange={handleChange}
+                  required
+                  className="rounded-md border px-3 py-2 outline-none transition focus:ring-2 focus:ring-[#3F51B5] text-gray-900"
+                />
+
                 <label htmlFor="nameTH" className="text-sm font-medium text-gray-800">ชื่อไทย</label>
                 <input
                   id="nameTH"

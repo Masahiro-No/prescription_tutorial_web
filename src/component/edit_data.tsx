@@ -96,7 +96,7 @@ export default function EditData({ id, onSuccess }: Props) {
 
   // ฟอร์มแก้ไข (medicine/prescription)
   return (
-    <div className="max-w-lg mx-auto bg-white p-6 rounded shadow">
+    <div className="max-w-lg mx-auto bg-white p-6 rounded shadow text-black">
       <h2 className="text-lg font-bold mb-4">แก้ไขข้อมูล medicine</h2>
       <label>รหัสยา</label>
       <input
