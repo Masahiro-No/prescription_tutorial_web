@@ -1,14 +1,12 @@
 "use client";
-import NavbarTabs from "@/component/tast_bar";
 
+import EditData from "@/component/edit_data";
 
 export default function precription_of_user() {
   return (
     <div className="bg-white min-h-screen">
-      <NavbarTabs page="prescription" />
-
       <main className="p-4">
-        <h1 className="text-xl font-bold">Storage of Medicines</h1>
+        <h1 className="text-xl font-bold text-black">Storage of Medicines</h1>
       </main>
     </div>
   );

@@ -1,5 +1,5 @@
 "use client";
-import NavbarTabs from "@/component/tast_bar";
+import NavbarTabs from "@/component/Nav_Bar";
 import SimpleTable from "@/component/simple_table";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
@@ -50,10 +50,9 @@ export default function List_of_medicine() {
 
   if (loading) return <div>Loading...</div>;
   return (
-    <div className="bg-white min-h-screen">
-      <NavbarTabs page="list" />
-      <main className="p-4">
-        <h1 className="text-xl font-bold">List of Medicines</h1>
+    <div>
+      <div className="p-4">
+        <h1 className="text-xl font-bold text-black">List of Medicines</h1>
         <SimpleTable<Medicine>
           data={data}
           columns={medicineColumns}
@@ -61,7 +60,7 @@ export default function List_of_medicine() {
           onRowClick={(r) => console.log("clicked medicine", r)}
           rowKey={(r) => r.id}
         />
-      </main>
+      </div>
     </div>
   );
 }
