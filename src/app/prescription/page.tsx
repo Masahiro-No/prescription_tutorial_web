@@ -1,5 +1,7 @@
 "use client";
 
+import EditData from "@/component/edit_data";
+
 export default function precription_of_user() {
   return (
     <div className="bg-white min-h-screen">

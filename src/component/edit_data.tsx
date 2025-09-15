@@ -1,54 +1,70 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-type EditType = "medicine" | "prescription";
-
 type Medicine = {
   id: string;
-  code: string;
-  name: string;
-  category: string;
+  medicineCode: string;
+  nameEN: string;
+  nameTH: string;
+  catagory: string;
   amount: number;
-  price: number;
-};
-
-type Prescription = {
-  id: string;
-  patientName: string;
-  doctorName: string;
-  date: string;
-  // เพิ่ม field ตาม schema จริง
+  current_price: number;
+  advice?: string | null;
 };
 
 type Props = {
   id: string;
-  type: EditType; // "medicine" หรือ "prescription"
   onSuccess?: () => void; // callback หลังแก้ไข/ลบสำเร็จ
 };
 
-export default function EditData({ id, type, onSuccess }: Props) {
-  const [data, setData] = useState<Medicine | Prescription | null>(null);
+export default function EditData({ id, onSuccess }: Props) {
+  const [data, setData] = useState<Medicine | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // ดึงข้อมูล
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/${type}/${id}`)
+    fetch(`/api/medicine/${id}`)
       .then((res) => res.json())
-      .then(setData)
+      .then((m) => {
+        // map backend shape to local Medicine type and coerce decimals to numbers
+        setData({
+          id: m.id,
+          medicineCode: m.medicineCode ?? "",
+          nameEN: m.nameEN ?? "",
+          nameTH: m.nameTH ?? "",
+          catagory: m.catagory ?? "",
+          amount: Number(m.amount ?? 0),
+          current_price: Number(m.current_price ?? m.price ?? 0),
+          advice: m.advice ?? "",
+        });
+      })
       .catch(() => setError("โหลดข้อมูลไม่สำเร็จ"))
       .finally(() => setLoading(false));
-  }, [id, type]);
+  }, [id]);
 
   // ฟังก์ชันแก้ไขข้อมูล
   const handleSave = async () => {
+    if (!data) return;
     setLoading(true);
     setError(null);
-    const res = await fetch(`/api/${type}/${id}`, {
-      method: "PUT",
+
+    // map local fields back to API shape
+    const payload = {
+      medicineCode: data.medicineCode,
+      nameEN: data.nameEN,
+      nameTH: data.nameTH,
+      catagory: data.catagory,
+      amount: data.amount,
+      current_price: data.current_price,
+      advice: data.advice ?? "",
+    };
+
+    const res = await fetch(`/api/medicine/${id}`, {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
     if (res.ok) {
       onSuccess?.();
@@ -64,7 +80,7 @@ export default function EditData({ id, type, onSuccess }: Props) {
     if (!confirm("ต้องการลบข้อมูลนี้จริงหรือไม่?")) return;
     setLoading(true);
     setError(null);
-    const res = await fetch(`/api/${type}/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/medicine/${id}`, { method: "DELETE" });
     if (res.ok) {
       onSuccess?.();
       alert("ลบสำเร็จ");
@@ -81,64 +97,76 @@ export default function EditData({ id, type, onSuccess }: Props) {
   // ฟอร์มแก้ไข (medicine/prescription)
   return (
     <div className="max-w-lg mx-auto bg-white p-6 rounded shadow">
-      <h2 className="text-lg font-bold mb-4">แก้ไขข้อมูล {type}</h2>
-      {type === "medicine" ? (
-        <>
-          <label>ชื่อยา</label>
-          <input
-            className="border p-2 w-full mb-2"
-            value={(data as Medicine).name}
-            onChange={e => setData({ ...(data as Medicine), name: e.target.value })}
-          />
-          <label>ประเภทยา</label>
-          <input
-            className="border p-2 w-full mb-2"
-            value={(data as Medicine).category}
-            onChange={e => setData({ ...(data as Medicine), category: e.target.value })}
-          />
-          <label>จำนวน</label>
-          <input
-            className="border p-2 w-full mb-2"
-            value={(data as Medicine).amount}
-            onChange={e => setData({ ...(data as Medicine), amount: Number(e.target.value) })}
-          />
-          <label>ราคา</label>
-          <input
-            className="border p-2 w-full mb-2"
-            value={(data as Medicine).price}
-            onChange={e => setData({ ...(data as Medicine), price: Number(e.target.value) })}
-          />
-        </>
-      ) : (
-        <>
-          <label>ชื่อผู้ป่วย</label>
-          <input
-            className="border p-2 w-full mb-2"
-            value={(data as Prescription).patientName}
-            onChange={e => setData({ ...(data as Prescription), patientName: e.target.value })}
-          />
-            <label>ชื่อแพทย์</label>
-            <input
-              className="border p-2 w-full mb-2"
-              value={(data as Prescription).doctorName}
-              onChange={e => setData({ ...(data as Prescription), doctorName: e.target.value })}
-            />
-            <label>วันที่</label>
-          <input
-            className="border p-2 w-full mb-2"
-            value={(data as Prescription).date}
-            onChange={e => setData({ ...(data as Prescription), date: e.target.value })}
-          />
-        </>
-      )}
-      <div className="flex gap-2 mt-4">
-        <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleSave} disabled={loading}>
-          บันทึก
-        </button>
-        <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={handleDelete} disabled={loading}>
-          ลบข้อมูล
-        </button>
-      </div>
-    </div>
-  );
-}
+      <h2 className="text-lg font-bold mb-4">แก้ไขข้อมูล medicine</h2>
+      <label>รหัสยา</label>
+      <input
+        className="border p-2 w-full mb-2"
+        value={data.medicineCode}
+        onChange={(e) => setData({ ...data, medicineCode: e.target.value })}
+      />
+
+      <label>ชื่อยา (อังกฤษ)</label>
+      <input
+        className="border p-2 w-full mb-2"
+        value={data.nameEN}
+        onChange={(e) => setData({ ...data, nameEN: e.target.value })}
+      />
+
+      <label>ชื่อยา (ไทย)</label>
+      <input
+        className="border p-2 w-full mb-2"
+        value={data.nameTH}
+        onChange={(e) => setData({ ...data, nameTH: e.target.value })}
+      />
+
+      <label>ประเภทยา</label>
+      <input
+        className="border p-2 w-full mb-2"
+        value={data.catagory}
+        onChange={(e) => setData({ ...data, catagory: e.target.value })}
+      />
+
+      <label>จำนวน</label>
+      <input
+        type="number"
+        className="border p-2 w-full mb-2"
+        value={data.amount}
+        onChange={(e) => setData({ ...data, amount: Number(e.target.value) })}
+      />
+
+      <label>ราคา</label>
+      <input
+        type="number"
+        step="0.01"
+        className="border p-2 w-full mb-2"
+        value={data.current_price}
+        onChange={(e) => setData({ ...data, current_price: Number(e.target.value) })}
+      />
+
+      <label>หมายเหตุ / คำแนะนำ</label>
+      <textarea
+        className="border p-2 w-full mb-2"
+        value={data.advice ?? ""}
+        onChange={(e) => setData({ ...data, advice: e.target.value })}
+      />
+
+          <div className="flex gap-2 mt-4">
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+              onClick={handleSave}
+              disabled={loading}
+            >
+              บันทึก
+            </button>
+
+            <button
+              className="bg-red-500 text-white px-4 py-2 rounded disabled:opacity-50"
+              onClick={handleDelete}
+              disabled={loading}
+            >
+              ลบข้อมูล
+            </button>
+          </div>
+        </div>
+      );
+    }
