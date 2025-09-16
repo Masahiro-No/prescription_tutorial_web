@@ -17,22 +17,27 @@ model Medicine {
   nameEN        String
   nameTH        String
   catagory      String
-  amount        Decimal            @db.Decimal(10, 2) @default(0) 
-  current_price Decimal            @map("current_price") @db.Decimal(10, 2) @default(0) 
-  advice        String? // optional
-  // picture       String[]?                            // optional, maps to Postgres text[]
-  items         PrescriptionItem[] // relation back to PrescriptionItem
+  amount        Decimal            @db.Decimal(10, 2) @default(0)
+  current_price Decimal            @map("current_price") @db.Decimal(10, 2) @default(0)
+  advice        String?                           // optional
+  items         PrescriptionItem[]               // one-to-many
 
   @@map("Medicine")
 }
 
 model PrescriptionItem {
-  id             String  @id @default(uuid()) @db.Uuid
-  medicineId     String  @map("medicineListed") @db.Uuid
-  prescriptionId String  @map("prescription") @db.Uuid
-  instruction    String? // optional
-  amount         Decimal @db.Decimal(10, 2) @default(0) 
-  price          Decimal @db.Decimal(10, 2) @default(0) 
+  id             String    @id @default(uuid()) @db.Uuid
+
+  // ทำให้ลบ Medicine ได้โดยไม่ชน FK: ให้ NULL ได้ + ตั้ง onDelete: SetNull
+  medicineId     String?   @map("medicineListed") @db.Uuid
+  prescriptionId String    @map("prescription")   @db.Uuid
+
+  instruction    String?                           // optional
+  amount         Decimal   @db.Decimal(10, 2) @default(0)
+  price          Decimal   @db.Decimal(10, 2) @default(0)
+
+  // ใช้ชื่อ camelCase ในโค้ด แต่ map ไปคอลัมน์เดิมชื่อ deleteAT
+  deletedAt      DateTime? @map("deleteAT")
 
   // relations
   medicine       Medicine?     @relation(fields: [medicineId], references: [id], onDelete: SetNull)
