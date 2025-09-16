@@ -3,7 +3,15 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 
 export async function GET() {
-const medicines = await prisma.medicine.findMany({ orderBy: { id: "asc" } });
+  const medicines = await prisma.medicine.findMany({
+    orderBy: { id: "asc" },
+    include: {
+      items: {
+        where: { deletedAt: null }, // ✅ เอาเฉพาะ items ที่ยังไม่โดน soft delete
+      },
+    },
+  });
+
   return NextResponse.json(medicines);
 }
 

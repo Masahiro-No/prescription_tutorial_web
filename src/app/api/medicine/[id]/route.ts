@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { deleteMedicineHardAndSoftItems } from "@/lib/services/medicineService";
 
 type Params = { params: { id: string } };
 
@@ -96,13 +97,14 @@ export async function PATCH(req: Request, { params }: Params) {
 }
 // ...existing code...
 
-export async function DELETE(_req: Request, { params }: Params) {
-    try {
-        await prisma.medicine.delete({
-            where: { id: params.id },
-        });
-        return NextResponse.json({ message: "Deleted successfully" });
-    } catch (e: any) {
-        return NextResponse.json({ error: e?.message ?? "Delete failed" }, { status: 400 });
+export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+  try {
+    const out = await deleteMedicineHardAndSoftItems(params.id);
+    return NextResponse.json(out, { status: 200 });
+  } catch (e: any) {
+    if (e?.code === "NOT_FOUND") {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
+    return NextResponse.json({ error: e?.message ?? "Delete failed" }, { status: 400 });
+  }
 }
