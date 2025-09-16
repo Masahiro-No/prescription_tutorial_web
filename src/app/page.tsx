@@ -4,6 +4,8 @@ import AddButton from "@/component/add_button";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import EditData from "@/component/edit_data";
+import { Input } from "@/components/ui/input"
+
 type Medicine = {
   id: string;
   medicineCode: string;
@@ -12,6 +14,7 @@ type Medicine = {
   catagory: string;
   amount: number;
   current_price: number;
+  advice: string | null;
 };
 
 const medicineColumns: ColumnDef<Medicine>[] = [
@@ -21,6 +24,7 @@ const medicineColumns: ColumnDef<Medicine>[] = [
   { accessorKey: "catagory", header: "หมวดหมู่" },
   { accessorKey: "amount", header: "จำนวน", },
   { accessorKey: "current_price", header: "ราคา", },
+  { accessorKey: "advice", header: "คำแนะนำ" },
 ];
 
 export default function List_of_medicine() {
@@ -66,24 +70,32 @@ export default function List_of_medicine() {
             />
           </div>
 
-          <div className="w-[40%]">
-            {selectedId ? (
-              <EditData
-                id={selectedId}
-                onSuccess={() => {
-                  // refresh list and close editor
-                  setLoading(true);
-                  fetch("/api/medicine")
-                    .then((res) => res.json())
-                    .then((meds: Medicine[]) => setData(meds))
-                    .finally(() => setLoading(false));
-                  setSelectedId(null);
-                }}
-              />
-            ) : (
-              <div className="p-4 text-gray-600">เลือกแถวเพื่อแก้ไข</div>
-            )}
-          </div>
+          {/* Modal popup for EditData */}
+          {selectedId && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+              <div className="bg-white rounded-lg shadow-lg p-6 min-w-[350px]">
+                <EditData
+                  id={selectedId}
+                  onSuccess={() => {
+                    setLoading(true);
+                    fetch("/api/medicine")
+                      .then((res) => res.json())
+                      .then((meds: Medicine[]) => setData(meds))
+                      .finally(() => setLoading(false));
+                    setSelectedId(null);
+                  }}
+                />
+                <div className="mt-4 flex justify-end">
+                  <button
+                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 text-black"
+                    onClick={() => setSelectedId(null)}
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

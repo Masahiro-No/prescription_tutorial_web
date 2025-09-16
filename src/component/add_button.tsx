@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-
+import { Input } from "@/components/ui/input"
 type Medicine = {
   medicineCode?: string;
   nameEN: string;
@@ -123,7 +123,7 @@ const AddButton: React.FC<AddButtonProps> = ({ defaultData, onSuccess }) => {
               {/* ฟิลด์ต่างๆ */}
               <div className="grid gap-1.5">
                 <label htmlFor="medicineCode" className="text-sm font-medium text-gray-800">รหัสยา</label>
-                <input
+                <Input
                   id="medicineCode"
                   name="medicineCode"
                   placeholder="เช่น MC1234"
@@ -134,7 +134,7 @@ const AddButton: React.FC<AddButtonProps> = ({ defaultData, onSuccess }) => {
                 />
 
                 <label htmlFor="nameTH" className="text-sm font-medium text-gray-800">ชื่อไทย</label>
-                <input
+                <Input
                   id="nameTH"
                   name="nameTH"
                   placeholder="เช่น พาราเซตามอล"
@@ -146,7 +146,7 @@ const AddButton: React.FC<AddButtonProps> = ({ defaultData, onSuccess }) => {
               </div>
               <div className="grid gap-1.5">
                 <label htmlFor="nameEN" className="text-sm font-medium text-gray-800">ชื่ออังกฤษ</label>
-                <input
+                <Input
                   id="nameEN"
                   name="nameEN"
                   placeholder="Paracetamol"
@@ -158,7 +158,7 @@ const AddButton: React.FC<AddButtonProps> = ({ defaultData, onSuccess }) => {
               </div>
               <div className="grid gap-1.5">
                 <label htmlFor="catagory" className="text-sm font-medium text-gray-800">หมวดหมู่</label>
-                <input
+                <Input
                   id="catagory"
                   name="catagory"
                   placeholder="ทั่วไป / ยาฆ่าเชื้อ / ยาแก้แพ้ ฯลฯ"
@@ -169,7 +169,7 @@ const AddButton: React.FC<AddButtonProps> = ({ defaultData, onSuccess }) => {
               </div>
               <div className="grid gap-1.5">
                 <label htmlFor="amount" className="text-sm font-medium text-gray-800">จำนวน</label>
-                <input
+                <Input
                   id="amount"
                   name="amount"
                   type="number"
