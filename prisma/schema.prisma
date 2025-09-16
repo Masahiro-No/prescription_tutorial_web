@@ -58,3 +58,4 @@ model Prescription {
 
   @@map("Prescription")
 }
+
