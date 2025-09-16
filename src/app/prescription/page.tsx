@@ -19,9 +19,9 @@ type PrescriptionResponse = {
 };
 
 type Precription = {
-  id: String;
-  name_patient: String;
-  name_docter: String;
+  id: string;
+  name_patient: string;
+  name_docter: string;
 };
 
 const prescriptionColumns: ColumnDef<Precription>[] = [
@@ -55,6 +55,8 @@ export default function precription_of_user() {
           data={data}
           columns={prescriptionColumns}
           className="w-[100%]"
+          onRowClick={(r) => setSelectedId(r.id)}
+          rowKey={(r) => r.id}
         />
       </main >
     </div >
